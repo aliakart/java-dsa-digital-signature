@@ -5,26 +5,32 @@ A desktop application built with Java and JavaFX that implements the **Digital S
 ## Features
 
 * **Key Generation:** Automatically generates secure DSA parameters (p, q, h) and key pairs (private key `a`, public key `b`).
-* **Text Signing & Verification:** Input any text, generate a digital signature, and verify its integrity.
-* **File Operations:** Sign and verify external files of any format.
-* **Signature Management:** Save generated signatures (`.sig` or `.txt`) to your local drive and load them later for verification.
+* **Text & File Signing:** Generate a digital signature for any text input or external file of any format.
+* **Autonomous Verification:** Signature files (`.sig`) now automatically store all necessary verification data (s1, s2, p, q, h, and public key b). Reviewers can verify documents simply by loading the signature file.
 * **Hashing:** Uses `SHA-256` for secure message digesting.
+* **Standalone Executable:** Packaged as a `.exe` Windows installer, requiring no Java installation for end-users.
 
 ## Technologies Used
 
 * **Java:** Core logic, `java.math.BigInteger` for large prime calculations, and `java.security` for secure random generation and hashing.
 * **JavaFX:** Graphical User Interface (GUI).
 * **Maven:** Dependency management and build automation.
+* **jpackage & WiX Toolset:** Used for compiling the standalone Windows installer.
 
 ## Prerequisites
 
-To run this project, you will need:
-* Java Development Kit (JDK) 11 or higher.
+To compile and run this project from source, you will need:
+* Java Development Kit (JDK) 14 or higher.
 * Maven installed.
 * JavaFX dependencies (managed via `pom.xml`).
+* WiX Toolset v3.11+ (only required if building the `.exe` installer).
 
-## How to Run
+## Installation and Usage
 
+**For End Users:**
+Download the latest `DSASigner-1.0.exe` from the Releases tab and run the installer. No Java installation or setup is required.
+
+**For Developers:**
 1. Clone the repository:
    ```bash
    git clone 
@@ -33,12 +39,17 @@ To run this project, you will need:
    ```bash
    cd your-repo-name
    ```
-3. Update Maven dependencies and run the application. The main entry point is `org.gui.DSAGUI`.
-   If using an IDE like IntelliJ IDEA or Eclipse, simply run the `DSAGUI.java` class.
+3. Update Maven dependencies and run the application. The main entry point is `org.krypto.Main`.
+4. To build the `.exe` installer manually, compile your project into a `.jar` artifact and run the following command in your terminal:
+   ```powershell
+   jpackage --type exe --input . --name "DSASigner" --main-jar your-artifact-name.jar --main-class org.krypto.Main --win-shortcut --win-menu --win-dir-chooser
+   ```
 
 ## Project Structure
 
-* `org.gui.DSAGUI` - The main JavaFX application providing the user interface.
+* `org.gui.DSAGUI` - The main JavaFX application providing the user interface layout.
+* `org.gui.DSAController` - Handles GUI events, file operations, and connects the UI with the cryptographic logic.
+* `org.krypto.Main` - The isolated entry point required for `jpackage` execution.
 * `org.krypto.DSALogic` - Contains the core cryptographic math (parameter generation, signing, verifying).
 * `org.krypto.SystemParams` / `KeyPair` / `Signature` - Data models storing cryptographic components.
 
